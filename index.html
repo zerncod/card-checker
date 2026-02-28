@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eligibility Checker</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: white; margin: 0; padding: 15px; color: #24292e; }
+        .container { max-width: 400px; margin: 0 auto; border: 1px solid #e1e4e8; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(27,31,35,0.04); }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+        select { width: 100%; padding: 10px; border: 1px solid #d1d5da; border-radius: 6px; background-color: #fafbfc; margin-bottom: 20px; font-size: 14px; outline: none; }
+        select:focus { border-color: #0366d6; box-shadow: 0 0 0 3px rgba(3,102,214,0.3); }
+        .result { padding: 15px; border-radius: 6px; font-size: 14px; line-height: 1.5; display: none; }
+        .eligible { background-color: #dafbe1; border: 1px solid #bbe5c5; color: #1a7f37; }
+        .not-eligible { background-color: #ffebe9; border: 1px solid #ffc1c0; color: #cf222e; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="step1">
+        <label>1. Select your citizenship:</label>
+        <select id="citizenship" onchange="updateFlow()">
+            <option value="">Choose...</option>
+            <option value="ru">Russia</option>
+            <option value="usa">USA</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+
+    <div id="step2" class="hidden">
+        <label>2. Do you have EEA+ residence?</label>
+        <select id="residence" onchange="updateFlow()">
+            <option value="">Choose...</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+
+    <div id="step3" class="hidden">
+        <label>3. Passed KYC Level 1 with RU passport?</label>
+        <select id="kyc" onchange="updateFlow()">
+            <option value="">Choose...</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    function updateFlow() {
+        const c = document.getElementById('citizenship').value;
+        const r = document.getElementById('residence');
+        const k = document.getElementById('kyc');
+        const res = document.getElementById('result');
+        
+        // Скрываем всё по умолчанию
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step3').classList.add('hidden');
+        res.style.display = 'none';
+
+        if (c === 'usa') {
+            showResult("<b>Not Eligible.</b> Unfortunately, we do not support this jurisdiction.", false);
+        } else if (c === 'other') {
+            showResult("<b>Eligible!</b> Please follow the standard flow for the rest of the world.", true);
+        } else if (c === 'ru') {
+            document.getElementById('step2').classList.remove('hidden');
+            if (r.value === 'no') {
+                showResult("<b>Not Eligible.</b> Russian citizens must have EEA+ residence to apply.", false);
+            } else if (r.value === 'yes') {
+                document.getElementById('step3').classList.remove('hidden');
+                if (k.value === 'yes') {
+                    showResult("<b>Eligible (Action required):</b> Since you passed KYC with a RU passport, please contact support to re-verify with your EEA residence.", true);
+                } else if (k.value === 'no') {
+                    showResult("<b>Eligible!</b> Please complete both KYC Level 1 and 2 using your EEA residence document.", true);
+                }
+            }
+        }
+    }
+
+    function showResult(text, isEligible) {
+        const res = document.getElementById('result');
+        res.innerHTML = text;
+        res.style.display = 'block';
+        res.className = isEligible ? 'result eligible' : 'result not-eligible';
+    }
+</script>
+
+</body>
+</html>
