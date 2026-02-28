@@ -18,20 +18,20 @@
 </head>
 <body>
 
-<div class="container">
+<div class="card">
     <div id="step1">
         <label>1. Select your citizenship:</label>
-        <select id="citizenship" onchange="updateFlow()">
+        <select id="citizenship" onchange="update()">
             <option value="">Choose...</option>
+            <option value="germany">Germany</option>
             <option value="ru">Russia</option>
-            <option value="usa">USA</option>
             <option value="other">Other</option>
         </select>
     </div>
 
     <div id="step2" class="hidden">
         <label>2. Do you have EEA+ residence?</label>
-        <select id="residence" onchange="updateFlow()">
+        <select id="residence" onchange="update()">
             <option value="">Choose...</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
@@ -40,7 +40,7 @@
 
     <div id="step3" class="hidden">
         <label>3. Passed KYC Level 1 with RU passport?</label>
-        <select id="kyc" onchange="updateFlow()">
+        <select id="kyc" onchange="update()">
             <option value="">Choose...</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
@@ -51,43 +51,40 @@
 </div>
 
 <script>
-    function updateFlow() {
+    function update() {
         const c = document.getElementById('citizenship').value;
         const r = document.getElementById('residence');
         const k = document.getElementById('kyc');
         const res = document.getElementById('result');
         
-        // Скрываем всё по умолчанию
         document.getElementById('step2').classList.add('hidden');
         document.getElementById('step3').classList.add('hidden');
         res.style.display = 'none';
 
-        if (c === 'usa') {
-            showResult("<b>Not Eligible.</b> Unfortunately, we do not support this jurisdiction.", false);
+        if (c === 'germany') {
+            show("<b>Eligible!</b> As a German citizen, you can apply immediately.", true);
         } else if (c === 'other') {
-            showResult("<b>Eligible!</b> Please follow the standard flow for the rest of the world.", true);
+            show("<b>Eligible!</b> Follow the standard flow.", true);
         } else if (c === 'ru') {
             document.getElementById('step2').classList.remove('hidden');
             if (r.value === 'no') {
-                showResult("<b>Not Eligible.</b> Russian citizens must have EEA+ residence to apply.", false);
+                show("<b>Not Eligible.</b> RU citizens must have EEA+ residence.", false);
             } else if (r.value === 'yes') {
                 document.getElementById('step3').classList.remove('hidden');
                 if (k.value === 'yes') {
-                    showResult("<b>Eligible (Action required):</b> Since you passed KYC with a RU passport, please contact support to re-verify with your EEA residence.", true);
+                    show("<b>Action required:</b> Contact support to re-verify with your EEA residence.", true);
                 } else if (k.value === 'no') {
-                    showResult("<b>Eligible!</b> Please complete both KYC Level 1 and 2 using your EEA residence document.", true);
+                    show("<b>Eligible!</b> Complete both KYC levels with your EEA document.", true);
                 }
             }
         }
     }
-
-    function showResult(text, isEligible) {
+    function show(text, ok) {
         const res = document.getElementById('result');
         res.innerHTML = text;
         res.style.display = 'block';
-        res.className = isEligible ? 'result eligible' : 'result not-eligible';
+        res.className = ok ? 'result eligible' : 'result not-eligible';
     }
 </script>
-
 </body>
 </html>
