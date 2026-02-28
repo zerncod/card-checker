@@ -85,7 +85,7 @@
         res.style.display = 'none';
 
         if (c === 'germany') {
-            show("<b>Eligible!</b> As a German citizen, you can apply immediately.", true);
+            show("<b>Eligible!</b> As a German citizen, you can apply for a card.", true);
         } else if (c === 'other') {
             show("<b>Eligible!</b> Follow the standard flow.", true);
         } else if (c === 'ru') {
@@ -95,9 +95,9 @@
             } else if (r.value === 'yes') {
                 document.getElementById('step3').classList.remove('hidden');
                 if (k.value === 'yes') {
-                    show("<b>Action required:</b> Contact support to re-verify with your EEA residence.", true);
+                    show("<b>Action required:</b> Contact support to re-verify with your EEA+ residence.", true);
                 } else if (k.value === 'no') {
-                    show("<b>Eligible!</b> Complete both KYC levels with your EEA document.", true);
+                    show("<b>Eligible!</b> Complete both KYC levels with your EEA+ document.", true);
                 }
             }
         }
