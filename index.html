@@ -6,86 +6,35 @@
     <title>GoMining Eligibility Checker</title>
     <style>
         :root {
-            --bg-page: #060a13;
-            --bg-card: #111726;
-            --accent-main: #8f42f3;
-            --accent-light: #c4a8ee;
-            --success: #28c76f;
-            --error: #ea5455;
-            --text-white: #ffffff;
+            --bg-page: #060a13; --bg-card: #111726; --accent-main: #8f42f3;
+            --accent-light: #c4a8ee; --success: #28c76f; --error: #ea5455; --text-white: #ffffff;
         }
-
         body {
-            font-family: -apple-system, sans-serif;
-            background-color: var(--bg-page);
-            color: var(--text-white);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            font-family: -apple-system, sans-serif; background-color: var(--bg-page);
+            color: var(--text-white); margin: 0; display: flex; justify-content: center;
+            align-items: center; height: 100vh; overflow: hidden;
         }
-
-        .quiz-view {
-            position: relative;
-            width: 100%;
-            max-width: 550px;
-            height: 480px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        .quiz-view { position: relative; width: 100%; max-width: 550px; height: 480px; display: flex; justify-content: center; align-items: center; }
         .step {
-            position: absolute;
-            width: 100%;
-            background: var(--bg-card);
-            border: 1px solid #232d43;
-            border-radius: 20px;
-            padding: 40px;
-            box-sizing: border-box;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            transform: translateX(120px);
-            pointer-events: none;
+            position: absolute; width: 100%; background: var(--bg-card); border: 1px solid #232d43;
+            border-radius: 20px; padding: 40px; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; transform: translateX(120px); pointer-events: none;
         }
-
         .step.active { opacity: 1; transform: translateX(0); pointer-events: all; }
         .step.exit { opacity: 0; transform: translateX(-120px); }
-
         h2 { font-size: 20px; margin-bottom: 25px; text-align: center; font-weight: 600; line-height: 1.4; }
-
         select {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #232d43;
-            border-radius: 12px;
-            background-color: #0c111d;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 18px;
+            width: 100%; padding: 16px; border: 2px solid #232d43; border-radius: 12px;
+            background-color: #0c111d; color: #fff; font-size: 15px; outline: none; cursor: pointer;
+            appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 18px;
         }
-
         select:focus { border-color: var(--accent-main); }
-
         .result-msg { text-align: center; line-height: 1.6; font-size: 16px; padding: 25px; border-radius: 12px; font-weight: 500; }
-        
         .eligible { background: rgba(40, 199, 111, 0.1); border: 1px solid var(--success); color: var(--success); }
         .action-required { background: rgba(143, 66, 243, 0.1); border: 1px solid var(--accent-main); color: var(--accent-light); }
         .not-eligible { background: rgba(234, 84, 85, 0.1); border: 1px solid var(--error); color: var(--error); }
-
-        .btn-restart {
-            display: block; margin: 25px auto 0; background: transparent; border: 1px solid #444; color: #aaa;
-            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px;
-        }
+        .btn-restart { display: block; margin: 25px auto 0; background: transparent; border: 1px solid #444; color: #aaa; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -93,35 +42,33 @@
 <div class="quiz-view">
     <div id="q1" class="step active">
         <h2>What is your citizenship?</h2>
-        <select id="country" onchange="handleCountry()">
-            <option value="">Select your country...</option>
-            </select>
+        <select id="country" onchange="handleCountry()"><option value="">Select country...</option></select>
     </div>
 
-    <div id="q_ru_res" class="step">
+    <div id="q_res" class="step">
         <h2>Do you have a valid EEA+ residence permit?</h2>
         <select id="residence" onchange="handleResidence()">
             <option value="">Select...</option>
-            <option value="yes">Yes, I have an EEA+ residence</option>
+            <option value="yes">Yes, I have EEA+ residence</option>
             <option value="no">No</option>
         </select>
     </div>
 
     <div id="q_docs" class="step">
-        <h2>Do you have a valid National Passport or ID?</h2>
+        <h2>Do you have a valid National Passport or ID card?</h2>
         <select id="docs" onchange="handleDocs()">
             <option value="">Select...</option>
-            <option value="yes">Yes, I have both</option>
+            <option value="yes">Yes, I have</option>
             <option value="no">No / Only Driver's License</option>
         </select>
     </div>
 
-    <div id="q_ru_kyc" class="step">
-        <h2>Did you pass KYC 1 with a RU passport?</h2>
+    <div id="q_kyc_check" class="step">
+        <h2>Have you already passed KYC 1 with your national document?</h2>
         <select id="kyc" onchange="handleKYC()">
             <option value="">Select...</option>
-            <option value="yes">Yes, I did</option>
-            <option value="no">No</option>
+            <option value="yes">Yes, I have an existing KYC</option>
+            <option value="no">No, I am a new user</option>
         </select>
     </div>
 
@@ -132,24 +79,18 @@
 </div>
 
 <script>
-    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "UMI"];
-    const eeaPlus = ["AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LIE", "LTU", "LUX", "MLT", "NLD", "NOR", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE", "CHE"];
-    const ruCase = ["RUS"];
-
+    // Список Prohibited (на основе вашего CSV и правил)
+    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "UMI", "RUS"];
+    
+    // Полный список стран из вашего файла (сокращено для примера, добавьте остальные по аналогии)
     const countries = [
-        {code: "AFG", name: "Afghanistan"}, {code: "ALA", name: "Åland Islands"}, {code: "ALB", name: "Albania"}, {code: "DZA", name: "Algeria"}, {code: "AND", name: "Andorra"}, {code: "AGO", name: "Angola"}, {code: "ARG", name: "Argentina"}, {code: "ARM", name: "Armenia"}, {code: "AUS", name: "Australia"}, {code: "AUT", name: "Austria"}, {code: "AZE", name: "Azerbaijan"}, {code: "BHS", name: "Bahamas"}, {code: "BHR", name: "Bahrain"}, {code: "BGD", name: "Bangladesh"}, {code: "BLR", name: "Belarus"}, {code: "BEL", name: "Belgium"}, {code: "BRA", name: "Brazil"}, {code: "BGR", name: "Bulgaria"}, {code: "CAN", name: "Canada"}, {code: "CHE", name: "Switzerland"}, {code: "CHN", name: "China"}, {code: "CYP", name: "Cyprus"}, {code: "CZE", name: "Czech Republic"}, {code: "DEU", name: "Germany"}, {code: "DNK", name: "Denmark"}, {code: "ESP", name: "Spain"}, {code: "EST", name: "Estonia"}, {code: "FIN", name: "Finland"}, {code: "FRA", name: "France"}, {code: "GBR", name: "United Kingdom"}, {code: "GRC", name: "Greece"}, {code: "HRV", name: "Croatia"}, {code: "HUN", name: "Hungary"}, {code: "IRL", name: "Ireland"}, {code: "ISL", name: "Iceland"}, {code: "ITA", name: "Italy"}, {code: "JPN", name: "Japan"}, {code: "KAZ", name: "Kazakhstan"}, {code: "LTU", name: "Lithuania"}, {code: "LUX", name: "Luxembourg"}, {code: "LVA", name: "Latvia"}, {code: "MLT", name: "Malta"}, {code: "NLD", name: "Netherlands"}, {code: "NOR", name: "Norway"}, {code: "POL", name: "Poland"}, {code: "PRT", name: "Portugal"}, {code: "ROU", name: "Romania"}, {code: "RUS", name: "Russian Federation"}, {code: "SVK", name: "Slovakia"}, {code: "SVN", name: "Slovenia"}, {code: "SWE", name: "Sweden"}, {code: "TUR", name: "Turkey"}, {code: "UKR", name: "Ukraine"}, {code: "USA", name: "United States"}, {code: "UZB", name: "Uzbekistan"}
-        // ... (Вы можете добавить сюда остальные страны из CSV в алфавитном порядке)
-    ].sort((a,b) => a.name.localeCompare(b.name));
+        {c:"AFG", n:"Afghanistan"}, {c:"ALB", n:"Albania"}, {c:"DZA", n:"Algeria"}, {c:"AND", n:"Andorra"}, {c:"AGO", n:"Angola"}, {c:"ARG", n:"Argentina"}, {c:"ARM", n:"Armenia"}, {c:"AUS", n:"Australia"}, {c:"AUT", n:"Austria"}, {c:"AZE", n:"Azerbaijan"}, {c:"BHR", n:"Bahrain"}, {c:"BGD", n:"Bangladesh"}, {c:"BLR", n:"Belarus"}, {c:"BEL", n:"Belgium"}, {c:"BRA", n:"Brazil"}, {c:"BGR", n:"Bulgaria"}, {c:"CAN", n:"Canada"}, {c:"CHL", n:"Chile"}, {c:"CHN", n:"China"}, {c:"COL", n:"Colombia"}, {c:"HRV", n:"Croatia"}, {c:"CYP", n:"Cyprus"}, {c:"CZE", n:"Czech Republic"}, {c:"DNK", n:"Denmark"}, {c:"EST", n:"Estonia"}, {c:"FIN", n:"Finland"}, {c:"FRA", n:"France"}, {c:"DEU", n:"Germany"}, {c:"GRC", n:"Greece"}, {c:"HUN", n:"Hungary"}, {c:"ISL", n:"Iceland"}, {c:"IND", n:"India"}, {c:"IDN", n:"Indonesia"}, {c:"IRL", n:"Ireland"}, {c:"ISR", n:"Israel"}, {c:"ITA", n:"Italy"}, {c:"JPN", n:"Japan"}, {c:"KAZ", n:"Kazakhstan"}, {c:"KOR", n:"South Korea"}, {c:"LVA", n:"Latvia"}, {c:"LTU", n:"Lithuania"}, {c:"LUX", n:"Luxembourg"}, {c:"MLT", n:"Malta"}, {c:"MEX", n:"Mexico"}, {c:"NLD", n:"Netherlands"}, {c:"NOR", n:"Norway"}, {c:"POL", n:"Poland"}, {c:"PRT", n:"Portugal"}, {c:"ROU", n:"Romania"}, {c:"RUS", n:"Russian Federation"}, {c:"SRB", n:"Serbia"}, {c:"SGP", n:"Singapore"}, {c:"SVK", n:"Slovakia"}, {c:"SVN", n:"Slovenia"}, {c:"ESP", n:"Spain"}, {c:"SWE", n:"Sweden"}, {c:"CHE", n:"Switzerland"}, {c:"THA", n:"Thailand"}, {c:"TUR", n:"Turkey"}, {c:"ARE", n:"UAE"}, {c:"GBR", n:"United Kingdom"}, {c:"USA", n:"USA"}, {c:"UZB", n:"Uzbekistan"}, {c:"VNM", n:"Vietnam"}
+    ].sort((a,b) => a.n.localeCompare(b.n));
 
-    const select = document.getElementById('country');
-    countries.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.code;
-        opt.textContent = c.name;
-        select.appendChild(opt);
-    });
+    const sel = document.getElementById('country');
+    countries.forEach(c => { let o = document.createElement('option'); o.value = c.c; o.textContent = c.n; sel.appendChild(o); });
 
-    let userPath = "";
+    let isProhibited = false;
 
     function move(from, to) {
         document.getElementById(from).classList.remove('active');
@@ -167,37 +108,40 @@
     function handleCountry() {
         const v = document.getElementById('country').value;
         if (!v) return;
-
-        if (prohibited.includes(v)) {
-            showFinal("<b>Not Eligible.</b> GoMining does not allow card accounts in prohibited jurisdictions.", "not-eligible");
-        } else if (ruCase.includes(v)) {
-            userPath = "ru";
-            move('q1', 'q_ru_res');
+        isProhibited = prohibited.includes(v);
+        
+        if (isProhibited) {
+            move('q1', 'q_res'); // Для Prohibited СРАЗУ спрашиваем резиденство
         } else {
-            userPath = eeaPlus.includes(v) ? "eea" : "world";
-            move('q1');
+            move('q1', 'q_docs'); // Для остальных сначала документы
         }
     }
 
     function handleResidence() {
-        if (document.getElementById('residence').value === 'no') {
-            showFinal("<b>Not Eligible.</b> RU citizens must have an EEA+ residence permit.", "not-eligible");
-        } else move('q_ru_res');
+        const v = document.getElementById('residence').value;
+        if (v === 'no') {
+            showFinal("<b>Not Eligible.</b> Citizens of restricted jurisdictions must have an EEA+ residence permit to apply.", "not-eligible");
+        } else {
+            // Если есть резиденство, переходим к проверке KYC (паспорт не спрашиваем)
+            move('q_res', 'q_kyc_check');
+        }
     }
 
     function handleDocs() {
         if (document.getElementById('docs').value === 'no') {
-            showFinal("<b>Action Required:</b> A driver's license is not accepted. Please use a National Passport or ID card.", "action-required");
+            showFinal("<b>Action Required:</b> Driver's licenses are not accepted. Please provide a National Passport or ID card.", "action-required");
         } else {
-            if (userPath === "ru") move('q_docs', 'q_ru_kyc');
-            else showFinal("<b>Eligible!</b> You can apply through the standard card flow.", "eligible");
+            move('q_docs', 'q_kyc_check');
         }
     }
 
     function handleKYC() {
-        if (document.getElementById('kyc').value === 'yes') {
-            showFinal("<b>Action Required:</b> Contact support to re-verify your KYC with your EEA documents.", "action-required");
-        } else showFinal("<b>Eligible!</b> Complete both KYC levels using your EEA documents.", "eligible");
+        const v = document.getElementById('kyc').value;
+        if (v === 'yes') {
+            showFinal("<b>Action Required:</b> Since you have an existing KYC with a restricted document, please contact support to update your profile with your EEA residence.", "action-required");
+        } else {
+            showFinal("<b>Eligible!</b> You can proceed with the application using your EEA residence documents.", "eligible");
+        }
     }
 </script>
 </body>
