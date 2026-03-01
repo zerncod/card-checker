@@ -3,40 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eligibility Checker</title>
+    <title>GoMining Eligibility Checker</title>
     <style>
+        /* Основные стили страницы и центрирование */
         body { 
             font-family: -apple-system, sans-serif; 
-            background-color: #f6f8fa; 
+            background-color: #0b0f19; /* Глубокий темно-синий фон как на сайте */
+            color: #ffffff; /* Белый текст */
             margin: 0; 
             display: flex; 
             justify-content: center; 
-            padding-top: 40px;
+            padding-top: 50px;
         }
-        /* Ограничиваем ширину контейнера, чтобы он не растягивался */
+
+        /* Стиль карточки виджета */
         .card { 
             width: 100%;
             max-width: 440px; 
-            background: white; 
-            border: 1px solid #d0d7de; 
+            background: #161c2d; /* Темная карточка */
+            border: 1px solid #232d43; /* Легкая граница */
             border-radius: 12px; 
             padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); /* Глубокая тень */
         }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #a0a6b5; }
+        
+        /* Стили для выпадающих списков (Select) */
         select { 
             width: 100%; 
-            padding: 10px; 
-            border: 1px solid #d1d5da; 
-            border-radius: 6px; 
+            padding: 12px; 
+            border: 1px solid #232d43; 
+            border-radius: 8px; 
+            background-color: #0f131f; /* Фон списка */
+            color: #ffffff; /* Текст списка */
             font-size: 14px; 
             margin-bottom: 20px;
             cursor: pointer;
+            appearance: none; /* Убираем стандартную стрелку */
+            outline: none;
+            transition: border-color 0.2s;
         }
-        .result { padding: 16px; border-radius: 6px; font-size: 14px; line-height: 1.5; display: none; margin-top: 10px; }
-        .eligible { background-color: #dafbe1; border: 1px solid #bbe5c5; color: #1a7f37; }
-        .not-eligible { background-color: #ffebe9; border: 1px solid #ffc1c0; color: #cf222e; }
+
+        select:focus { border-color: #8c5dff; } /* Фиолетовая граница при фокусе */
+
+        /* Блок результата */
+        .result { padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.5; display: none; margin-top: 10px; }
+        
+        /* Стили для Eligible */
+        .eligible { background-color: rgba(40, 199, 111, 0.1); border: 1px solid #28c76f; color: #28c76f; }
+        
+        /* Стили для Not Eligible */
+        .not-eligible { background-color: rgba(234, 84, 85, 0.1); border: 1px solid #ea5455; color: #ea5455; }
+        
         .hidden { display: none; }
+        
+        /* Стиль для кнопки (если добавите в конце) */
+        .btn {
+            background-color: #8c5dff; /* Яркий фиолетовый */
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 15px;
+        }
+        .btn:hover { background-color: #7a4be0; }
     </style>
 </head>
 <body>
@@ -85,19 +120,19 @@
         res.style.display = 'none';
 
         if (c === 'germany') {
-            show("<b>Eligible!</b> As a German citizen, you can apply for a card.", true);
+            show("<b>Eligible!</b> As a German citizen, you can apply immediately.", true);
         } else if (c === 'other') {
-            show("<b>Eligible!</b> Follow the standard flow.", true);
+            show("<b>Eligible!</b> Follow the standard application flow for your region.", true);
         } else if (c === 'ru') {
             document.getElementById('step2').classList.remove('hidden');
             if (r.value === 'no') {
-                show("<b>Not Eligible.</b> RU citizens must have EEA+ residence.", false);
+                show("<b>Not Eligible.</b> RU citizens must have EEA+ residence to apply.", false);
             } else if (r.value === 'yes') {
                 document.getElementById('step3').classList.remove('hidden');
                 if (k.value === 'yes') {
-                    show("<b>Action required:</b> Contact support to re-verify with your EEA+ residence.", true);
+                    show("<b>Action required:</b> Contact support to re-verify your KYC using your EEA residence.", true);
                 } else if (k.value === 'no') {
-                    show("<b>Eligible!</b> Complete both KYC levels with your EEA+ document.", true);
+                    show("<b>Eligible!</b> Complete <b>both KYC Level 1 and 2</b> using your EEA residence document.", true);
                 }
             }
         }
