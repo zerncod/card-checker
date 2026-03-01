@@ -29,7 +29,6 @@
             appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 15px center; background-size: 18px;
         }
-        select:focus { border-color: var(--accent-main); }
         .result-msg { text-align: center; line-height: 1.6; font-size: 16px; padding: 25px; border-radius: 12px; font-weight: 500; }
         .eligible { background: rgba(40, 199, 111, 0.1); border: 1px solid var(--success); color: var(--success); }
         .action-required { background: rgba(143, 66, 243, 0.1); border: 1px solid var(--accent-main); color: var(--accent-light); }
@@ -79,18 +78,19 @@
 </div>
 
 <script>
-    // Список Prohibited (на основе вашего CSV и правил)
-    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "UMI", "RUS"];
-    
-    // Полный список стран из вашего файла (сокращено для примера, добавьте остальные по аналогии)
+    // Списки на основе вашего CSV
+    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "RUS", "UMI"];
+    const eeaPlus = ["AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LIE", "LTU", "LUX", "MLT", "NLD", "NOR", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE", "CHE"];
+
+    // Полный список стран (USA удалена)
     const countries = [
-        {c:"AFG", n:"Afghanistan"}, {c:"ALB", n:"Albania"}, {c:"DZA", n:"Algeria"}, {c:"AND", n:"Andorra"}, {c:"AGO", n:"Angola"}, {c:"ARG", n:"Argentina"}, {c:"ARM", n:"Armenia"}, {c:"AUS", n:"Australia"}, {c:"AUT", n:"Austria"}, {c:"AZE", n:"Azerbaijan"}, {c:"BHR", n:"Bahrain"}, {c:"BGD", n:"Bangladesh"}, {c:"BLR", n:"Belarus"}, {c:"BEL", n:"Belgium"}, {c:"BRA", n:"Brazil"}, {c:"BGR", n:"Bulgaria"}, {c:"CAN", n:"Canada"}, {c:"CHL", n:"Chile"}, {c:"CHN", n:"China"}, {c:"COL", n:"Colombia"}, {c:"HRV", n:"Croatia"}, {c:"CYP", n:"Cyprus"}, {c:"CZE", n:"Czech Republic"}, {c:"DNK", n:"Denmark"}, {c:"EST", n:"Estonia"}, {c:"FIN", n:"Finland"}, {c:"FRA", n:"France"}, {c:"DEU", n:"Germany"}, {c:"GRC", n:"Greece"}, {c:"HUN", n:"Hungary"}, {c:"ISL", n:"Iceland"}, {c:"IND", n:"India"}, {c:"IDN", n:"Indonesia"}, {c:"IRL", n:"Ireland"}, {c:"ISR", n:"Israel"}, {c:"ITA", n:"Italy"}, {c:"JPN", n:"Japan"}, {c:"KAZ", n:"Kazakhstan"}, {c:"KOR", n:"South Korea"}, {c:"LVA", n:"Latvia"}, {c:"LTU", n:"Lithuania"}, {c:"LUX", n:"Luxembourg"}, {c:"MLT", n:"Malta"}, {c:"MEX", n:"Mexico"}, {c:"NLD", n:"Netherlands"}, {c:"NOR", n:"Norway"}, {c:"POL", n:"Poland"}, {c:"PRT", n:"Portugal"}, {c:"ROU", n:"Romania"}, {c:"RUS", n:"Russian Federation"}, {c:"SRB", n:"Serbia"}, {c:"SGP", n:"Singapore"}, {c:"SVK", n:"Slovakia"}, {c:"SVN", n:"Slovenia"}, {c:"ESP", n:"Spain"}, {c:"SWE", n:"Sweden"}, {c:"CHE", n:"Switzerland"}, {c:"THA", n:"Thailand"}, {c:"TUR", n:"Turkey"}, {c:"ARE", n:"UAE"}, {c:"GBR", n:"United Kingdom"}, {c:"USA", n:"USA"}, {c:"UZB", n:"Uzbekistan"}, {c:"VNM", n:"Vietnam"}
+        {c:"AFG", n:"Afghanistan"}, {c:"ALB", n:"Albania"}, {c:"DZA", n:"Algeria"}, {c:"AND", n:"Andorra"}, {c:"AGO", n:"Angola"}, {c:"ARG", n:"Argentina"}, {c:"ARM", n:"Armenia"}, {c:"AUS", n:"Australia"}, {c:"AUT", n:"Austria"}, {c:"AZE", n:"Azerbaijan"}, {c:"BEL", n:"Belgium"}, {c:"BLR", n:"Belarus"}, {c:"BRA", n:"Brazil"}, {c:"BGR", n:"Bulgaria"}, {c:"CAN", n:"Canada"}, {c:"CHL", n:"Chile"}, {c:"CHN", n:"China"}, {c:"COL", n:"Colombia"}, {c:"HRV", n:"Croatia"}, {c:"CYP", n:"Cyprus"}, {c:"CZE", n:"Czech Republic"}, {c:"DNK", n:"Denmark"}, {c:"EST", n:"Estonia"}, {c:"FIN", n:"Finland"}, {c:"FRA", n:"France"}, {c:"DEU", n:"Germany"}, {c:"GRC", n:"Greece"}, {c:"HUN", n:"Hungary"}, {c:"ISL", n:"Iceland"}, {c:"IND", n:"India"}, {c:"IDN", n:"Indonesia"}, {c:"IRL", n:"Ireland"}, {c:"ISR", n:"Israel"}, {c:"ITA", n:"Italy"}, {c:"JPN", n:"Japan"}, {c:"KAZ", n:"Kazakhstan"}, {c:"KOR", n:"South Korea"}, {c:"LVA", n:"Latvia"}, {c:"LTU", n:"Lithuania"}, {c:"LUX", n:"Luxembourg"}, {c:"MLT", n:"Malta"}, {c:"MEX", n:"Mexico"}, {c:"NLD", n:"Netherlands"}, {c:"NOR", n:"Norway"}, {c:"POL", n:"Poland"}, {c:"PRT", n:"Portugal"}, {c:"ROU", n:"Romania"}, {c:"RUS", n:"Russian Federation"}, {c:"SRB", n:"Serbia"}, {c:"SGP", n:"Singapore"}, {c:"SVK", n:"Slovakia"}, {c:"SVN", n:"Slovenia"}, {c:"ESP", n:"Spain"}, {c:"SWE", n:"Sweden"}, {c:"CHE", n:"Switzerland"}, {c:"THA", n:"Thailand"}, {c:"TUR", n:"Turkey"}, {c:"ARE", n:"UAE"}, {c:"GBR", n:"United Kingdom"}, {c:"UZB", n:"Uzbekistan"}, {c:"VNM", n:"Vietnam"}
     ].sort((a,b) => a.n.localeCompare(b.n));
 
     const sel = document.getElementById('country');
     countries.forEach(c => { let o = document.createElement('option'); o.value = c.c; o.textContent = c.n; sel.appendChild(o); });
 
-    let isProhibited = false;
+    let flowType = "";
 
     function move(from, to) {
         document.getElementById(from).classList.remove('active');
@@ -108,39 +108,34 @@
     function handleCountry() {
         const v = document.getElementById('country').value;
         if (!v) return;
-        isProhibited = prohibited.includes(v);
-        
-        if (isProhibited) {
+
+        if (prohibited.includes(v)) {
+            flowType = "prohibited";
             move('q1', 'q_res'); // Для Prohibited СРАЗУ спрашиваем резиденство
         } else {
-            move('q1', 'q_docs'); // Для остальных сначала документы
+            flowType = eeaPlus.includes(v) ? "eea" : "world";
+            move('q1', 'q_docs'); // Для остальных (EEA и World) спрашиваем паспорт
         }
     }
 
     function handleResidence() {
-        const v = document.getElementById('residence').value;
-        if (v === 'no') {
+        if (document.getElementById('residence').value === 'no') {
             showFinal("<b>Not Eligible.</b> Citizens of restricted jurisdictions must have an EEA+ residence permit to apply.", "not-eligible");
-        } else {
-            // Если есть резиденство, переходим к проверке KYC (паспорт не спрашиваем)
-            move('q_res', 'q_kyc_check');
-        }
+        } else move('q_res', 'q_kyc_check');
     }
 
     function handleDocs() {
         if (document.getElementById('docs').value === 'no') {
             showFinal("<b>Action Required:</b> Driver's licenses are not accepted. Please provide a National Passport or ID card.", "action-required");
-        } else {
-            move('q_docs', 'q_kyc_check');
-        }
+        } else move('q_docs', 'q_kyc_check');
     }
 
     function handleKYC() {
         const v = document.getElementById('kyc').value;
         if (v === 'yes') {
-            showFinal("<b>Action Required:</b> Since you have an existing KYC with a restricted document, please contact support to update your profile with your EEA residence.", "action-required");
+            showFinal("<b>Action Required:</b> Since you have an existing KYC, please contact support to update your profile with your valid document.", "action-required");
         } else {
-            showFinal("<b>Eligible!</b> You can proceed with the application using your EEA residence documents.", "eligible");
+            showFinal("<b>Eligible!</b> You can proceed with the application.", "eligible");
         }
     }
 </script>
