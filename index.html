@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoMining Eligibility Checker</title>
+    <title>GoMining Eligibility</title>
     <style>
         :root {
-            --bg-page: #060a13; --bg-card: #111726; --accent-main: #8f42f3;
-            --accent-light: #c4a8ee; --success: #28c76f; --error: #ea5455; --text-white: #ffffff;
+            --bg-page: #060a13; --bg-card: #111726; --accent: #8f42f3;
+            --success: #28c76f; --error: #ea5455; --text: #ffffff;
         }
         body {
-            font-family: -apple-system, sans-serif; background-color: var(--bg-page);
-            color: var(--text-white); margin: 0; display: flex; justify-content: center;
+            font-family: -apple-system, sans-serif; background: var(--bg-page);
+            color: var(--text); margin: 0; display: flex; justify-content: center;
             align-items: center; height: 100vh; overflow: hidden;
         }
-        .quiz-view { position: relative; width: 100%; max-width: 550px; height: 480px; display: flex; justify-content: center; align-items: center; }
+        .quiz-view { position: relative; width: 100%; max-width: 500px; height: 400px; }
         .step {
             position: absolute; width: 100%; background: var(--bg-card); border: 1px solid #232d43;
-            border-radius: 20px; padding: 40px; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; transform: translateX(120px); pointer-events: none;
+            border-radius: 20px; padding: 30px; box-sizing: border-box;
+            transition: all 0.4s ease-in-out; opacity: 0; transform: translateX(100px); pointer-events: none;
         }
         .step.active { opacity: 1; transform: translateX(0); pointer-events: all; }
-        .step.exit { opacity: 0; transform: translateX(-120px); }
-        h2 { font-size: 20px; margin-bottom: 25px; text-align: center; font-weight: 600; line-height: 1.4; }
+        .step.exit { opacity: 0; transform: translateX(-100px); }
+        h2 { font-size: 18px; margin-bottom: 20px; text-align: center; }
         select {
-            width: 100%; padding: 16px; border: 2px solid #232d43; border-radius: 12px;
-            background-color: #0c111d; color: #fff; font-size: 15px; outline: none; cursor: pointer;
-            appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 15px center; background-size: 18px;
+            width: 100%; padding: 14px; border: 2px solid #232d43; border-radius: 12px;
+            background: #0c111d; color: #fff; font-size: 15px; outline: none; cursor: pointer;
         }
-        .result-msg { text-align: center; line-height: 1.6; font-size: 16px; padding: 25px; border-radius: 12px; font-weight: 500; }
+        .result-msg { text-align: center; padding: 20px; border-radius: 12px; font-weight: 500; }
         .eligible { background: rgba(40, 199, 111, 0.1); border: 1px solid var(--success); color: var(--success); }
-        .action-required { background: rgba(143, 66, 243, 0.1); border: 1px solid var(--accent-main); color: var(--accent-light); }
+        .action-required { background: rgba(143, 66, 243, 0.1); border: 1px solid var(--accent); color: #c4a8ee; }
         .not-eligible { background: rgba(234, 84, 85, 0.1); border: 1px solid var(--error); color: var(--error); }
-        .btn-restart { display: block; margin: 25px auto 0; background: transparent; border: 1px solid #444; color: #aaa; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+        .btn-reset { display: block; margin: 20px auto 0; background: none; border: 1px solid #444; color: #aaa; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -41,101 +39,82 @@
 <div class="quiz-view">
     <div id="q1" class="step active">
         <h2>What is your citizenship?</h2>
-        <select id="country" onchange="handleCountry()"><option value="">Select country...</option></select>
+        <select id="country" onchange="next('q1')"><option value="">Select country...</option></select>
     </div>
 
     <div id="q_res" class="step">
         <h2>Do you have a valid EEA+ residence permit?</h2>
-        <select id="residence" onchange="handleResidence()">
+        <select id="res" onchange="next('q_res')">
             <option value="">Select...</option>
-            <option value="yes">Yes, I have EEA+ residence</option>
+            <option value="yes">Yes</option>
             <option value="no">No</option>
         </select>
     </div>
 
-    <div id="q_docs" class="step">
+    <div id="q_doc" class="step">
         <h2>Do you have a valid National Passport or ID card?</h2>
-        <select id="docs" onchange="handleDocs()">
+        <select id="doc" onchange="next('q_doc')">
             <option value="">Select...</option>
-            <option value="yes">Yes, I have</option>
+            <option value="yes">Yes</option>
             <option value="no">No / Only Driver's License</option>
         </select>
     </div>
 
-    <div id="q_kyc_check" class="step">
-        <h2>Have you already passed KYC 1 with your national document?</h2>
-        <select id="kyc" onchange="handleKYC()">
+    <div id="q_kyc" class="step">
+        <h2>Passed KYC 1 with your national document?</h2>
+        <select id="kyc" onchange="next('q_kyc')">
             <option value="">Select...</option>
-            <option value="yes">Yes, I have an existing KYC</option>
-            <option value="no">No, I am a new user</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
         </select>
     </div>
 
-    <div id="q_result" class="step">
+    <div id="q_res_final" class="step">
         <div id="res-box" class="result-msg"></div>
-        <button class="btn-restart" onclick="location.reload()">← Start over</button>
+        <button class="btn-reset" onclick="location.reload()">← Start over</button>
     </div>
 </div>
 
 <script>
-    // Списки на основе вашего CSV
-    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "RUS", "UMI"];
-    const eeaPlus = ["AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LIE", "LTU", "LUX", "MLT", "NLD", "NOR", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE", "CHE"];
-
-    // Полный список стран (USA удалена)
-    const countries = [
+    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "RUS"];
+    
+    // Чистый список стран без USA
+    const list = [
         {c:"AFG", n:"Afghanistan"}, {c:"ALB", n:"Albania"}, {c:"DZA", n:"Algeria"}, {c:"AND", n:"Andorra"}, {c:"AGO", n:"Angola"}, {c:"ARG", n:"Argentina"}, {c:"ARM", n:"Armenia"}, {c:"AUS", n:"Australia"}, {c:"AUT", n:"Austria"}, {c:"AZE", n:"Azerbaijan"}, {c:"BEL", n:"Belgium"}, {c:"BLR", n:"Belarus"}, {c:"BRA", n:"Brazil"}, {c:"BGR", n:"Bulgaria"}, {c:"CAN", n:"Canada"}, {c:"CHL", n:"Chile"}, {c:"CHN", n:"China"}, {c:"COL", n:"Colombia"}, {c:"HRV", n:"Croatia"}, {c:"CYP", n:"Cyprus"}, {c:"CZE", n:"Czech Republic"}, {c:"DNK", n:"Denmark"}, {c:"EST", n:"Estonia"}, {c:"FIN", n:"Finland"}, {c:"FRA", n:"France"}, {c:"DEU", n:"Germany"}, {c:"GRC", n:"Greece"}, {c:"HUN", n:"Hungary"}, {c:"ISL", n:"Iceland"}, {c:"IND", n:"India"}, {c:"IDN", n:"Indonesia"}, {c:"IRL", n:"Ireland"}, {c:"ISR", n:"Israel"}, {c:"ITA", n:"Italy"}, {c:"JPN", n:"Japan"}, {c:"KAZ", n:"Kazakhstan"}, {c:"KOR", n:"South Korea"}, {c:"LVA", n:"Latvia"}, {c:"LTU", n:"Lithuania"}, {c:"LUX", n:"Luxembourg"}, {c:"MLT", n:"Malta"}, {c:"MEX", n:"Mexico"}, {c:"NLD", n:"Netherlands"}, {c:"NOR", n:"Norway"}, {c:"POL", n:"Poland"}, {c:"PRT", n:"Portugal"}, {c:"ROU", n:"Romania"}, {c:"RUS", n:"Russian Federation"}, {c:"SRB", n:"Serbia"}, {c:"SGP", n:"Singapore"}, {c:"SVK", n:"Slovakia"}, {c:"SVN", n:"Slovenia"}, {c:"ESP", n:"Spain"}, {c:"SWE", n:"Sweden"}, {c:"CHE", n:"Switzerland"}, {c:"THA", n:"Thailand"}, {c:"TUR", n:"Turkey"}, {c:"ARE", n:"UAE"}, {c:"GBR", n:"United Kingdom"}, {c:"UZB", n:"Uzbekistan"}, {c:"VNM", n:"Vietnam"}
     ].sort((a,b) => a.n.localeCompare(b.n));
 
-    const sel = document.getElementById('country');
-    countries.forEach(c => { let o = document.createElement('option'); o.value = c.c; o.textContent = c.n; sel.appendChild(o); });
+    const s = document.getElementById('country');
+    list.forEach(i => { let o = document.createElement('option'); o.value = i.c; o.textContent = i.n; s.appendChild(o); });
 
-    let flowType = "";
-
-    function move(from, to) {
-        document.getElementById(from).classList.remove('active');
-        document.getElementById(from).classList.add('exit');
-        setTimeout(() => { document.getElementById(to).classList.add('active'); }, 150);
+    function move(f, t) {
+        document.getElementById(f).classList.remove('active');
+        document.getElementById(f).classList.add('exit');
+        setTimeout(() => { document.getElementById(t).classList.add('active'); }, 100);
     }
 
-    function showFinal(text, status) {
-        const box = document.getElementById('res-box');
-        box.innerHTML = text;
-        box.className = 'result-msg ' + status;
-        move(document.querySelector('.step.active').id, 'q_result');
+    function fin(t, st) {
+        const b = document.getElementById('res-box');
+        b.innerHTML = t; b.className = 'result-msg ' + st;
+        move(document.querySelector('.step.active').id, 'q_res_final');
     }
 
-    function handleCountry() {
-        const v = document.getElementById('country').value;
-        if (!v) return;
-
-        if (prohibited.includes(v)) {
-            flowType = "prohibited";
-            move('q1', 'q_res'); // Для Prohibited СРАЗУ спрашиваем резиденство
-        } else {
-            flowType = eeaPlus.includes(v) ? "eea" : "world";
-            move('q1', 'q_docs'); // Для остальных (EEA и World) спрашиваем паспорт
+    function next(step) {
+        const country = document.getElementById('country').value;
+        if (step === 'q1') {
+            if (prohibited.includes(country)) move('q1', 'q_res');
+            else move('q1', 'q_doc');
+        } 
+        else if (step === 'q_res') {
+            if (document.getElementById('res').value === 'no') fin("<b>Not Eligible.</b> Restricted citizens must have an EEA+ residence.", "not-eligible");
+            else move('q_res', 'q_kyc');
         }
-    }
-
-    function handleResidence() {
-        if (document.getElementById('residence').value === 'no') {
-            showFinal("<b>Not Eligible.</b> Citizens of restricted jurisdictions must have an EEA+ residence permit to apply.", "not-eligible");
-        } else move('q_res', 'q_kyc_check');
-    }
-
-    function handleDocs() {
-        if (document.getElementById('docs').value === 'no') {
-            showFinal("<b>Action Required:</b> Driver's licenses are not accepted. Please provide a National Passport or ID card.", "action-required");
-        } else move('q_docs', 'q_kyc_check');
-    }
-
-    function handleKYC() {
-        const v = document.getElementById('kyc').value;
-        if (v === 'yes') {
-            showFinal("<b>Action Required:</b> Since you have an existing KYC, please contact support to update your profile with your valid document.", "action-required");
-        } else {
-            showFinal("<b>Eligible!</b> You can proceed with the application.", "eligible");
+        else if (step === 'q_doc') {
+            if (document.getElementById('doc').value === 'no') fin("<b>Action Required:</b> Driver's license not accepted. Need Passport/ID.", "action-required");
+            else move('q_doc', 'q_kyc');
+        }
+        else if (step === 'q_kyc') {
+            if (document.getElementById('kyc').value === 'yes') fin("<b>Action Required:</b> Contact support to update your KYC with EEA documents.", "action-required");
+            else fin("<b>Eligible!</b> You can proceed with the application.", "eligible");
         }
     }
 </script>
