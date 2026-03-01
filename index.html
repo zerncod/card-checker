@@ -3,146 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoMining Eligibility Checker</title>
+    <title>GoMining Eligibility</title>
     <style>
-        /* Основные стили страницы и центрирование */
-        body { 
-            font-family: -apple-system, sans-serif; 
-            background-color: #0b0f19; /* Глубокий темно-синий фон как на сайте */
-            color: #ffffff; /* Белый текст */
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            padding-top: 50px;
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #161c2d;
+            --text-main: #ffffff;
+            --text-dim: #a0a6b5;
+            --accent: #8c5dff;
+            --success: #28c76f;
+            --error: #ea5455;
         }
 
-        /* Стиль карточки виджета */
-        .card { 
+        body {
+            font-family: -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Контейнер для слайдов */
+        .quiz-container {
+            position: relative;
             width: 100%;
-            max-width: 440px; 
-            background: #161c2d; /* Темная карточка */
-            border: 1px solid #232d43; /* Легкая граница */
-            border-radius: 12px; 
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); /* Глубокая тень */
+            max-width: 450px;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #a0a6b5; }
-        
-        /* Стили для выпадающих списков (Select) */
-        select { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #232d43; 
-            border-radius: 8px; 
-            background-color: #0f131f; /* Фон списка */
-            color: #ffffff; /* Текст списка */
-            font-size: 14px; 
-            margin-bottom: 20px;
-            cursor: pointer;
-            appearance: none; /* Убираем стандартную стрелку */
+        /* Общий стиль карточки */
+        .step {
+            position: absolute;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid #232d43;
+            border-radius: 16px;
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateX(100px);
+            pointer-events: none;
+        }
+
+        /* Активный шаг */
+        .step.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        /* Уходящий шаг (влево) */
+        .step.exit {
+            opacity: 0;
+            transform: translateX(-100px);
+        }
+
+        label { display: block; font-weight: 600; margin-bottom: 20px; font-size: 18px; text-align: center; }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #232d43;
+            border-radius: 10px;
+            background-color: #0f131f;
+            color: #fff;
+            font-size: 16px;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        select:focus { border-color: #8c5dff; } /* Фиолетовая граница при фокусе */
-
-        /* Блок результата */
-        .result { padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.5; display: none; margin-top: 10px; }
-        
-        /* Стили для Eligible */
-        .eligible { background-color: rgba(40, 199, 111, 0.1); border: 1px solid #28c76f; color: #28c76f; }
-        
-        /* Стили для Not Eligible */
-        .not-eligible { background-color: rgba(234, 84, 85, 0.1); border: 1px solid #ea5455; color: #ea5455; }
-        
-        .hidden { display: none; }
-        
-        /* Стиль для кнопки (если добавите в конце) */
-        .btn {
-            background-color: #8c5dff; /* Яркий фиолетовый */
-            color: #ffffff;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-            margin-top: 15px;
+            transition: border-color 0.3s;
         }
-        .btn:hover { background-color: #7a4be0; }
+
+        select:focus { border-color: var(--accent); }
+
+        .result-box {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .eligible { background: rgba(40, 199, 111, 0.1); border: 1px solid var(--success); color: var(--success); }
+        .not-eligible { background: rgba(234, 84, 85, 0.1); border: 1px solid var(--error); color: var(--error); }
+        
+        .btn-reset {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid var(--text-dim);
+            color: var(--text-dim);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div id="step1">
-        <label>1. Select your citizenship:</label>
-        <select id="citizenship" onchange="update()">
-            <option value="">Choose...</option>
+<div class="quiz-container">
+    <div id="step1" class="step active">
+        <label>What is your citizenship?</label>
+        <select id="citizenship" onchange="nextStep('step1', 'citizenship')">
+            <option value="">Select...</option>
             <option value="germany">Germany</option>
             <option value="ru">Russia</option>
             <option value="other">Other</option>
         </select>
     </div>
 
-    <div id="step2" class="hidden">
-        <label>2. Do you have EEA+ residence?</label>
-        <select id="residence" onchange="update()">
-            <option value="">Choose...</option>
+    <div id="step2" class="step">
+        <label>Do you have EEA+ residence?</label>
+        <select id="residence" onchange="nextStep('step2', 'residence')">
+            <option value="">Select...</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
         </select>
     </div>
 
-    <div id="step3" class="hidden">
-        <label>3. Passed KYC Level 1 with RU passport?</label>
-        <select id="kyc" onchange="update()">
-            <option value="">Choose...</option>
+    <div id="step3" class="step">
+        <label>Passed KYC Level 1 with RU passport?</label>
+        <select id="kyc" onchange="nextStep('step3', 'kyc')">
+            <option value="">Select...</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
         </select>
     </div>
 
-    <div id="result" class="result"></div>
+    <div id="step-result" class="step">
+        <div id="result-content" class="result-box"></div>
+        <button class="btn-reset" onclick="resetQuiz()">← Start over</button>
+    </div>
 </div>
 
 <script>
-    function update() {
-        const c = document.getElementById('citizenship').value;
-        const r = document.getElementById('residence');
-        const k = document.getElementById('kyc');
-        const res = document.getElementById('result');
-        
-        document.getElementById('step2').classList.add('hidden');
-        document.getElementById('step3').classList.add('hidden');
-        res.style.display = 'none';
+    function nextStep(currentId, type) {
+        const val = document.getElementById(type).value;
+        if (!val) return;
 
-        if (c === 'germany') {
-            show("<b>Eligible!</b> As a German citizen, you can apply immediately.", true);
-        } else if (c === 'other') {
-            show("<b>Eligible!</b> Follow the standard application flow for your region.", true);
-        } else if (c === 'ru') {
-            document.getElementById('step2').classList.remove('hidden');
-            if (r.value === 'no') {
-                show("<b>Not Eligible.</b> RU citizens must have EEA+ residence to apply.", false);
-            } else if (r.value === 'yes') {
-                document.getElementById('step3').classList.remove('hidden');
-                if (k.value === 'yes') {
-                    show("<b>Action required:</b> Contact support to re-verify your KYC using your EEA residence.", true);
-                } else if (k.value === 'no') {
-                    show("<b>Eligible!</b> Complete <b>both KYC Level 1 and 2</b> using your EEA residence document.", true);
-                }
+        const current = document.getElementById(currentId);
+        
+        // Логика переходов
+        if (type === 'citizenship') {
+            if (val === 'germany') {
+                showFinal("<b>Eligible!</b> As a German citizen, you can apply immediately.", true);
+            } else if (val === 'other') {
+                showFinal("<b>Eligible!</b> Please follow the standard application flow.", true);
+            } else if (val === 'ru') {
+                goTo('step1', 'step2');
+            }
+        } 
+        else if (type === 'residence') {
+            if (val === 'no') {
+                showFinal("<b>Not Eligible.</b> RU citizens must have EEA+ residence to apply.", false);
+            } else {
+                goTo('step2', 'step3');
+            }
+        }
+        else if (type === 'kyc') {
+            if (val === 'yes') {
+                showFinal("<b>Action required:</b> Contact support to re-verify your KYC with EEA documents.", true);
+            } else {
+                showFinal("<b>Eligible!</b> Complete both KYC levels using your EEA document.", true);
             }
         }
     }
-    function show(text, ok) {
-        const res = document.getElementById('result');
-        res.innerHTML = text;
-        res.style.display = 'block';
-        res.className = ok ? 'result eligible' : 'result not-eligible';
+
+    function goTo(fromId, toId) {
+        const from = document.getElementById(fromId);
+        const to = document.getElementById(toId);
+        
+        from.classList.remove('active');
+        from.classList.add('exit');
+        
+        setTimeout(() => {
+            to.classList.add('active');
+        }, 100);
+    }
+
+    function showFinal(text, isEligible) {
+        const resBox = document.getElementById('result-content');
+        resBox.innerHTML = text;
+        resBox.className = 'result-box ' + (isEligible ? 'eligible' : 'not-eligible');
+        
+        // Находим текущий активный шаг, чтобы уйти с него
+        const activeStep = document.querySelector('.step.active');
+        goTo(activeStep.id, 'step-result');
+    }
+
+    function resetQuiz() {
+        location.reload();
     }
 </script>
+
 </body>
 </html>
