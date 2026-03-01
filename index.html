@@ -108,7 +108,7 @@
     </div>
 
     <div id="q_docs" class="step">
-        <h2>Do you have a valid National Passport and Proof of Address?</h2>
+        <h2>Do you have a valid National Passport or ID?</h2>
         <select id="docs" onchange="handleDocs()">
             <option value="">Select...</option>
             <option value="yes">Yes, I have both</option>
@@ -132,7 +132,6 @@
 </div>
 
 <script>
-    // Списки стран из вашего CSV
     const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "UMI"];
     const eeaPlus = ["AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LIE", "LTU", "LUX", "MLT", "NLD", "NOR", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE", "CHE"];
     const ruCase = ["RUS"];
@@ -142,7 +141,6 @@
         // ... (Вы можете добавить сюда остальные страны из CSV в алфавитном порядке)
     ].sort((a,b) => a.name.localeCompare(b.name));
 
-    // Наполнение селекта
     const select = document.getElementById('country');
     countries.forEach(c => {
         const opt = document.createElement('option');
@@ -177,14 +175,14 @@
             move('q1', 'q_ru_res');
         } else {
             userPath = eeaPlus.includes(v) ? "eea" : "world";
-            move('q1', 'q_docs');
+            move('q1');
         }
     }
 
     function handleResidence() {
         if (document.getElementById('residence').value === 'no') {
             showFinal("<b>Not Eligible.</b> RU citizens must have an EEA+ residence permit.", "not-eligible");
-        } else move('q_ru_res', 'q_docs');
+        } else move('q_ru_res');
     }
 
     function handleDocs() {
