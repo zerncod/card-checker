@@ -162,10 +162,10 @@
     <div id="q_eea" class="step">
         <span class="tag tag-eea">EEA+ Citizen</span>
         <h2>Do you have a valid identity document?</h2>
-        <p class="hint">Passport, national ID card, or Residence Permit are accepted.<br>Driver's license is <b>not</b> accepted.</p>
+        <p class="hint">Passport or national ID card are accepted.<br>Driver's license is <b>not</b> accepted.</p>
         <select id="eea_doc" onchange="onEeaDoc()">
             <option value="">Select...</option>
-            <option value="yes">Yes — Passport, ID card, or Residence Permit</option>
+            <option value="yes">Yes (Passport or ID card)</option>
             <option value="no">No / Only Driver's License</option>
         </select>
     </div>
@@ -298,7 +298,7 @@
         {c:"TON",n:"Tonga"},{c:"TTO",n:"Trinidad and Tobago"},{c:"TUN",n:"Tunisia"},
         {c:"TUR",n:"Turkey"},{c:"TKM",n:"Turkmenistan"},{c:"TUV",n:"Tuvalu"},
         {c:"UGA",n:"Uganda"},{c:"UKR",n:"Ukraine"},{c:"ARE",n:"UAE"},
-        {c:"GBR",n:"United Kingdom"},{c:"USA",n:"United States"},
+        {c:"GBR",n:"United Kingdom"},
         {c:"URY",n:"Uruguay"},{c:"UZB",n:"Uzbekistan"},
         {c:"VUT",n:"Vanuatu"},{c:"VEN",n:"Venezuela"},{c:"VNM",n:"Vietnam"},
         {c:"ESH",n:"Western Sahara"},
@@ -349,9 +349,9 @@
         const val = document.getElementById('eea_doc').value;
         if (!val) return;
         if (val === 'yes')
-            finish("<b>Eligible ✓</b><br><br>You can apply using your <b>Passport</b>, <b>ID card</b>, or <b>Residence Permit</b>.<br>Also prepare a <b>proof of address</b> (no older than 3 months).", "eligible");
+            finish("<b>Eligible ✓</b><br><br>You can apply using your <b>Passport</b> or <b>ID card</b>.<br>Also prepare a <b>proof of address</b> (no older than 3 months).", "eligible");
         else
-            finish("<b>Not eligible.</b><br><br>A driver's license is not accepted as proof of identity.<br>You need a valid Passport, ID card, or Residence Permit.", "not-eligible");
+            finish("<b>Not eligible.</b><br><br>A driver's license is not accepted as proof of identity.<br>You need a valid Passport or national ID card.", "not-eligible");
     }
 
     function onProhDoc() {
