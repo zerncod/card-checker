@@ -6,17 +6,19 @@
     <title>GoMining Eligibility Checker</title>
     <style>
         :root {
-            --bg-page: #060a13; /* Глубокий темный фон */
-            --bg-card: #111726; /* Фон карточки как на скрине */
-            --accent-light: #c4a8ee; /* Твой цвет */
-            --accent-main: #8f42f3;  /* Твой цвет */
+            --bg-page: #060a13;
+            --bg-card: #111726;
+            --accent-main: #8f42f3;
+            --accent-light: #c4a8ee;
+            --success: #28c76f;
+            --error: #ea5455;
             --text-white: #ffffff;
-            --text-dim: #a0a6b5;
         }
 
         body {
-            font-family: -apple-system, system-ui, sans-serif;
+            font-family: -apple-system, sans-serif;
             background-color: var(--bg-page);
+            color: var(--text-white);
             margin: 0;
             display: flex;
             justify-content: center;
@@ -25,18 +27,16 @@
             overflow: hidden;
         }
 
-        /* Контейнер для фиксации размера и центрирования */
         .quiz-view {
             position: relative;
             width: 100%;
-            max-width: 520px; /* Чуть шире, как ты просил */
-            height: 380px;
+            max-width: 550px;
+            height: 450px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Стиль каждого шага */
         .step {
             position: absolute;
             width: 100%;
@@ -48,28 +48,14 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
-            transform: translateX(120px); /* Появление справа */
+            transform: translateX(120px);
             pointer-events: none;
         }
 
-        .step.active {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: all;
-        }
+        .step.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+        .step.exit { opacity: 0; transform: translateX(-120px); }
 
-        .step.exit {
-            opacity: 0;
-            transform: translateX(-120px); /* Уход влево */
-        }
-
-        h2 {
-            color: var(--text-white);
-            font-size: 22px;
-            margin-bottom: 30px;
-            text-align: center;
-            font-weight: 600;
-        }
+        h2 { font-size: 20px; margin-bottom: 25px; text-align: center; font-weight: 600; line-height: 1.4; }
 
         select {
             width: 100%;
@@ -78,10 +64,9 @@
             border-radius: 12px;
             background-color: #0c111d;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
             cursor: pointer;
-            transition: all 0.3s ease;
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -89,49 +74,17 @@
             background-size: 18px;
         }
 
-        /* Твои фирменные цвета при фокусе */
-        select:focus { 
-            border-color: var(--accent-main);
-            box-shadow: 0 0 10px rgba(143, 66, 243, 0.3);
-        }
+        select:focus { border-color: var(--accent-main); }
 
-        /* Финальные блоки */
-        .result-msg {
-            text-align: center;
-            line-height: 1.6;
-            font-size: 16px;
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        .eligible { 
-            background: linear-gradient(135deg, rgba(143, 66, 243, 0.1) 0%, rgba(196, 168, 238, 0.1) 100%);
-            border: 1px solid var(--accent-light);
-            color: var(--accent-light);
-        }
-
-        .not-eligible { 
-            background: rgba(234, 84, 85, 0.1); 
-            border: 1px solid #ea5455; 
-            color: #ea5455; 
-        }
+        .result-msg { text-align: center; line-height: 1.6; font-size: 16px; padding: 25px; border-radius: 12px; font-weight: 500; }
+        
+        .eligible { background: rgba(40, 199, 111, 0.1); border: 1px solid var(--success); color: var(--success); }
+        .action-required { background: rgba(143, 66, 243, 0.1); border: 1px solid var(--accent-main); color: var(--accent-light); }
+        .not-eligible { background: rgba(234, 84, 85, 0.1); border: 1px solid var(--error); color: var(--error); }
 
         .btn-restart {
-            display: block;
-            margin: 25px auto 0;
-            background: transparent;
-            border: 1px solid var(--text-dim);
-            color: var(--text-dim);
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .btn-restart:hover {
-            color: #fff;
-            border-color: #fff;
+            display: block; margin: 25px auto 0; background: transparent; border: 1px solid #444; color: #aaa;
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px;
         }
     </style>
 </head>
@@ -140,74 +93,119 @@
 <div class="quiz-view">
     <div id="q1" class="step active">
         <h2>What is your citizenship?</h2>
-        <select id="citizenship" onchange="handleSelect('q1', 'citizenship')">
-            <option value="">Select...</option>
-            <option value="germany">Germany</option>
-            <option value="ru">Russia</option>
-            <option value="other">Other</option>
+        <select id="country" onchange="handleCountry()">
+            <option value="">Select your country...</option>
+            <optgroup label="EEA+ (Eligible)">
+                <option value="eea">Austria, Belgium, France, Germany</option>
+                <option value="eea">Ireland, Liechtenstein, Luxembourg, Netherlands</option>
+                <option value="eea">Portugal, Switzerland, Denmark, Estonia</option>
+                <option value="eea">Finland, Latvia, Lithuania, Sweden, Iceland</option>
+                <option value="eea">Norway, Cyprus, Croatia, Greece, Italy, Malta, Spain</option>
+                <option value="eea">Bulgaria, Czechia, Hungary, Poland, Romania, Slovakia, Slovenia</option>
+            </optgroup>
+            <optgroup label="Prohibited (Restricted)">
+                <option value="prohibited">Russia</option>
+                <option value="prohibited">Belarus</option>
+                <option value="prohibited">USA (Minor Outlying Islands)</option>
+                <option value="prohibited">Other (Afghanistan, Iran, North Korea, etc.)</option>
+            </optgroup>
+            <option value="world">Rest of the World</option>
         </select>
     </div>
 
-    <div id="q2" class="step">
-        <h2>Do you have EEA+ residence?</h2>
-        <select id="residence" onchange="handleSelect('q2', 'residence')">
+    <div id="q_ru_res" class="step">
+        <h2>Do you have a valid EEA+ residence permit?</h2>
+        <select id="residence" onchange="handleResidence()">
             <option value="">Select...</option>
-            <option value="yes">Yes</option>
+            <option value="yes">Yes, I have an EEA+ residence</option>
             <option value="no">No</option>
         </select>
     </div>
 
-    <div id="q3" class="step">
-        <h2>Passed KYC Level 1 with RU passport?</h2>
-        <select id="kyc" onchange="handleSelect('q3', 'kyc')">
+    <div id="q_docs" class="step">
+        <h2>Do you have a valid National Passport and Proof of Address?</h2>
+        <select id="docs" onchange="handleDocs()">
             <option value="">Select...</option>
-            <option value="yes">Yes</option>
+            <option value="yes">Yes, I have both</option>
+            <option value="no">No / Only Driver's License</option>
+        </select>
+    </div>
+
+    <div id="q_ru_kyc" class="step">
+        <h2>Did you pass KYC 1 with a RU passport?</h2>
+        <select id="kyc" onchange="handleKYC()">
+            <option value="">Select...</option>
+            <option value="yes">Yes, I did</option>
             <option value="no">No</option>
         </select>
     </div>
 
-    <div id="q-result" class="step">
+    <div id="q_result" class="step">
         <div id="res-box" class="result-msg"></div>
         <button class="btn-restart" onclick="location.reload()">← Start over</button>
     </div>
 </div>
 
 <script>
-    function handleSelect(currentStepId, type) {
-        const val = document.getElementById(type).value;
-        if (!val) return;
-
-        // ЛОГИКА ПЕРЕХОДОВ
-        if (type === 'citizenship') {
-            if (val === 'germany') showFinal("<b>Eligible!</b> As a German citizen, you can apply for a GoMining card immediately.", true);
-            else if (val === 'other') showFinal("<b>Eligible!</b> Please follow the standard application flow.", true);
-            else if (val === 'ru') move('q1', 'q2');
-        } 
-        else if (type === 'residence') {
-            if (val === 'no') showFinal("<b>Not Eligible.</b> RU citizens must have a valid EEA+ residence permit to apply.", false);
-            else move('q2', 'q3');
-        }
-        else if (type === 'kyc') {
-            if (val === 'yes') showFinal("<b>Action required:</b> Since you passed KYC 1 with a RU passport, contact support to re-verify with your EEA documents.", true);
-            else showFinal("<b>Eligible!</b> You can apply. Ensure you complete both KYC levels using your EEA residence document.", true);
-        }
-    }
+    let path = "";
 
     function move(from, to) {
-        const f = document.getElementById(from);
-        const t = document.getElementById(to);
-        f.classList.remove('active');
-        f.classList.add('exit');
-        setTimeout(() => { t.classList.add('active'); }, 150);
+        document.getElementById(from).classList.remove('active');
+        document.getElementById(from).classList.add('exit');
+        setTimeout(() => { document.getElementById(to).classList.add('active'); }, 150);
     }
 
-    function showFinal(text, ok) {
+    function showFinal(text, status) {
         const box = document.getElementById('res-box');
         box.innerHTML = text;
-        box.className = 'result-msg ' + (ok ? 'eligible' : 'not-eligible');
-        
+        box.className = 'result-msg ' + status;
         const active = document.querySelector('.step.active');
-        move(active.id, 'q-result');
+        move(active.id, 'q_result');
+    }
+
+    function handleCountry() {
+        const v = document.getElementById('country').value;
+        if (!v) return;
+        if (v === 'prohibited') {
+            const countryText = document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
+            if (countryText.includes("Russia")) {
+                path = "ru";
+                move('q1', 'q_ru_res');
+            } else {
+                showFinal("<b>Not Eligible.</b> GoMining does not allow card accounts in prohibited jurisdictions.", "not-eligible");
+            }
+        } else if (v === 'eea') {
+            path = "eea";
+            move('q1', 'q_docs');
+        } else {
+            path = "world";
+            move('q1', 'q_docs');
+        }
+    }
+
+    function handleResidence() {
+        if (document.getElementById('residence').value === 'no') {
+            showFinal("<b>Not Eligible.</b> RU citizens must have an EEA+ residence permit to apply.", "not-eligible");
+        } else {
+            move('q_ru_res', 'q_docs');
+        }
+    }
+
+    function handleDocs() {
+        if (document.getElementById('docs').value === 'no') {
+            showFinal("<b>Action Required:</b> A driver's license is not accepted as valid proof of identity. Please use a National Passport or ID card.", "action-required");
+        } else {
+            if (path === "ru") move('q_docs', 'q_ru_kyc');
+            else showFinal("<b>Eligible!</b> You can apply through the standard card flow.", "eligible");
+        }
+    }
+
+    function handleKYC() {
+        if (document.getElementById('kyc').value === 'yes') {
+            showFinal("<b>Action Required:</b> Since you passed KYC 1 with a RU passport, please contact support to re-verify with your EEA documents.", "action-required");
+        } else {
+            showFinal("<b>Eligible!</b> Complete both KYC levels using your EEA residence documents.", "eligible");
+        }
     }
 </script>
 
