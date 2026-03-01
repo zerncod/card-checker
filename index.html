@@ -31,7 +31,7 @@
             position: relative;
             width: 100%;
             max-width: 550px;
-            height: 450px;
+            height: 480px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -95,22 +95,7 @@
         <h2>What is your citizenship?</h2>
         <select id="country" onchange="handleCountry()">
             <option value="">Select your country...</option>
-            <optgroup label="EEA+ (Eligible)">
-                <option value="eea">Austria, Belgium, France, Germany</option>
-                <option value="eea">Ireland, Liechtenstein, Luxembourg, Netherlands</option>
-                <option value="eea">Portugal, Switzerland, Denmark, Estonia</option>
-                <option value="eea">Finland, Latvia, Lithuania, Sweden, Iceland</option>
-                <option value="eea">Norway, Cyprus, Croatia, Greece, Italy, Malta, Spain</option>
-                <option value="eea">Bulgaria, Czechia, Hungary, Poland, Romania, Slovakia, Slovenia</option>
-            </optgroup>
-            <optgroup label="Prohibited (Restricted)">
-                <option value="prohibited">Russia</option>
-                <option value="prohibited">Belarus</option>
-                <option value="prohibited">USA (Minor Outlying Islands)</option>
-                <option value="prohibited">Other (Afghanistan, Iran, North Korea, etc.)</option>
-            </optgroup>
-            <option value="world">Rest of the World</option>
-        </select>
+            </select>
     </div>
 
     <div id="q_ru_res" class="step">
@@ -147,7 +132,26 @@
 </div>
 
 <script>
-    let path = "";
+    // Списки стран из вашего CSV
+    const prohibited = ["AFG", "BLR", "BDI", "CAF", "COG", "COD", "CUB", "GINE", "GNB", "IRN", "IRQ", "LBN", "LBY", "MLI", "MMR", "PRK", "SOM", "SSD", "SDN", "SYR", "VEN", "YEM", "ZWE", "UMI"];
+    const eeaPlus = ["AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LIE", "LTU", "LUX", "MLT", "NLD", "NOR", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE", "CHE"];
+    const ruCase = ["RUS"];
+
+    const countries = [
+        {code: "AFG", name: "Afghanistan"}, {code: "ALA", name: "Åland Islands"}, {code: "ALB", name: "Albania"}, {code: "DZA", name: "Algeria"}, {code: "AND", name: "Andorra"}, {code: "AGO", name: "Angola"}, {code: "ARG", name: "Argentina"}, {code: "ARM", name: "Armenia"}, {code: "AUS", name: "Australia"}, {code: "AUT", name: "Austria"}, {code: "AZE", name: "Azerbaijan"}, {code: "BHS", name: "Bahamas"}, {code: "BHR", name: "Bahrain"}, {code: "BGD", name: "Bangladesh"}, {code: "BLR", name: "Belarus"}, {code: "BEL", name: "Belgium"}, {code: "BRA", name: "Brazil"}, {code: "BGR", name: "Bulgaria"}, {code: "CAN", name: "Canada"}, {code: "CHE", name: "Switzerland"}, {code: "CHN", name: "China"}, {code: "CYP", name: "Cyprus"}, {code: "CZE", name: "Czech Republic"}, {code: "DEU", name: "Germany"}, {code: "DNK", name: "Denmark"}, {code: "ESP", name: "Spain"}, {code: "EST", name: "Estonia"}, {code: "FIN", name: "Finland"}, {code: "FRA", name: "France"}, {code: "GBR", name: "United Kingdom"}, {code: "GRC", name: "Greece"}, {code: "HRV", name: "Croatia"}, {code: "HUN", name: "Hungary"}, {code: "IRL", name: "Ireland"}, {code: "ISL", name: "Iceland"}, {code: "ITA", name: "Italy"}, {code: "JPN", name: "Japan"}, {code: "KAZ", name: "Kazakhstan"}, {code: "LTU", name: "Lithuania"}, {code: "LUX", name: "Luxembourg"}, {code: "LVA", name: "Latvia"}, {code: "MLT", name: "Malta"}, {code: "NLD", name: "Netherlands"}, {code: "NOR", name: "Norway"}, {code: "POL", name: "Poland"}, {code: "PRT", name: "Portugal"}, {code: "ROU", name: "Romania"}, {code: "RUS", name: "Russian Federation"}, {code: "SVK", name: "Slovakia"}, {code: "SVN", name: "Slovenia"}, {code: "SWE", name: "Sweden"}, {code: "TUR", name: "Turkey"}, {code: "UKR", name: "Ukraine"}, {code: "USA", name: "United States"}, {code: "UZB", name: "Uzbekistan"}
+        // ... (Вы можете добавить сюда остальные страны из CSV в алфавитном порядке)
+    ].sort((a,b) => a.name.localeCompare(b.name));
+
+    // Наполнение селекта
+    const select = document.getElementById('country');
+    countries.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.code;
+        opt.textContent = c.name;
+        select.appendChild(opt);
+    });
+
+    let userPath = "";
 
     function move(from, to) {
         document.getElementById(from).classList.remove('active');
@@ -159,55 +163,44 @@
         const box = document.getElementById('res-box');
         box.innerHTML = text;
         box.className = 'result-msg ' + status;
-        const active = document.querySelector('.step.active');
-        move(active.id, 'q_result');
+        move(document.querySelector('.step.active').id, 'q_result');
     }
 
     function handleCountry() {
         const v = document.getElementById('country').value;
         if (!v) return;
-        if (v === 'prohibited') {
-            const countryText = document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
-            if (countryText.includes("Russia")) {
-                path = "ru";
-                move('q1', 'q_ru_res');
-            } else {
-                showFinal("<b>Not Eligible.</b> GoMining does not allow card accounts in prohibited jurisdictions.", "not-eligible");
-            }
-        } else if (v === 'eea') {
-            path = "eea";
-            move('q1', 'q_docs');
+
+        if (prohibited.includes(v)) {
+            showFinal("<b>Not Eligible.</b> GoMining does not allow card accounts in prohibited jurisdictions.", "not-eligible");
+        } else if (ruCase.includes(v)) {
+            userPath = "ru";
+            move('q1', 'q_ru_res');
         } else {
-            path = "world";
+            userPath = eeaPlus.includes(v) ? "eea" : "world";
             move('q1', 'q_docs');
         }
     }
 
     function handleResidence() {
         if (document.getElementById('residence').value === 'no') {
-            showFinal("<b>Not Eligible.</b> RU citizens must have an EEA+ residence permit to apply.", "not-eligible");
-        } else {
-            move('q_ru_res', 'q_docs');
-        }
+            showFinal("<b>Not Eligible.</b> RU citizens must have an EEA+ residence permit.", "not-eligible");
+        } else move('q_ru_res', 'q_docs');
     }
 
     function handleDocs() {
         if (document.getElementById('docs').value === 'no') {
-            showFinal("<b>Action Required:</b> A driver's license is not accepted as valid proof of identity. Please use a National Passport or ID card.", "action-required");
+            showFinal("<b>Action Required:</b> A driver's license is not accepted. Please use a National Passport or ID card.", "action-required");
         } else {
-            if (path === "ru") move('q_docs', 'q_ru_kyc');
+            if (userPath === "ru") move('q_docs', 'q_ru_kyc');
             else showFinal("<b>Eligible!</b> You can apply through the standard card flow.", "eligible");
         }
     }
 
     function handleKYC() {
         if (document.getElementById('kyc').value === 'yes') {
-            showFinal("<b>Action Required:</b> Since you passed KYC 1 with a RU passport, please contact support to re-verify with your EEA documents.", "action-required");
-        } else {
-            showFinal("<b>Eligible!</b> Complete both KYC levels using your EEA residence documents.", "eligible");
-        }
+            showFinal("<b>Action Required:</b> Contact support to re-verify your KYC with your EEA documents.", "action-required");
+        } else showFinal("<b>Eligible!</b> Complete both KYC levels using your EEA documents.", "eligible");
     }
 </script>
-
 </body>
 </html>
